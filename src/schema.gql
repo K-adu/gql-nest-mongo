@@ -1,0 +1,50 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  username: String!
+  email: String!
+  password: String!
+}
+
+type UserType {
+  user: User!
+  access_token: String!
+}
+
+type Post {
+  postTitle: String!
+  postDescription: String!
+  isPublic: Boolean
+  postedBy: User!
+  totalComments: Float
+}
+
+type Query {
+  tryQuery: User!
+  validateUser(loginData: LoginInput!): UserType!
+  getPosts: Post!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  createPost(createPost: CreatePostInput!): Post!
+}
+
+input CreateUserInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+input CreatePostInput {
+  postTitle: String!
+  postDescription: String!
+  isPublic: Boolean!
+}
