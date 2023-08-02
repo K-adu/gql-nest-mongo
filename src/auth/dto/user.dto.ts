@@ -3,8 +3,10 @@ import { User } from '../../users/user.entity';
 
 @ObjectType()
 export class UserType {
-  @Field(() => User)
-  user: User;
+  @Field()
+  username: string;
+  @Field()
+  email: string;
   @Field()
   access_token: string;
 }

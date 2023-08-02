@@ -9,7 +9,8 @@ type User {
 }
 
 type UserType {
-  user: User!
+  username: String!
+  email: String!
   access_token: String!
 }
 
