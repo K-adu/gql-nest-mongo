@@ -21,10 +21,34 @@ type Post {
   totalComments: Float
 }
 
+type Comment {
+  comment: String!
+  commentedBy: User!
+  postId: Post!
+}
+
+type PostResponse {
+  postTitle: String
+  postDescription: String
+  isPublic: Boolean
+  postedBy: User
+  totalComments: Float
+  _id: String!
+  comments: [Comment!]
+}
+
+type CommentResponse {
+  comment: String
+  commentedBy: User
+  postId: Post
+  _id: String!
+}
+
 type Query {
   tryQuery: User!
   validateUser(loginData: LoginInput!): UserType!
   getPosts: Post!
+  posts: [PostResponse!]!
 }
 
 input LoginInput {
@@ -35,6 +59,7 @@ input LoginInput {
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   createPost(createPost: CreatePostInput!): Post!
+  createComment(createComment: CreateCommentInput!): CommentResponse!
 }
 
 input CreateUserInput {
@@ -47,4 +72,9 @@ input CreatePostInput {
   postTitle: String!
   postDescription: String!
   isPublic: Boolean!
+}
+
+input CreateCommentInput {
+  id: String!
+  comment: String!
 }

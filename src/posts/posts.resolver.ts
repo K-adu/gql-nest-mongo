@@ -5,6 +5,7 @@ import { Post } from './posts.entity';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { CurrentUser } from 'src/auth/current-user';
+import { PostResponse } from './dto/response-post.output';
 @Resolver('Post')
 export class PostsResolver {
   constructor(private postService: PostsService) {}
@@ -17,7 +18,8 @@ export class PostsResolver {
     @Args('createPost') data: CreatePostInput,
   ) {
     console.log(currentUser._id);
-    return await this.postService.createPost(currentUser, data);
+    const [post] = await this.postService.createPost(currentUser, data);
+    return post;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -29,22 +31,26 @@ export class PostsResolver {
       postDescription: 'this is the psot description',
     };
   }
-
-  // @Query(() => Post)
-  // async findAll() {}
-
-  // @UseGuards(JwtAuthGuard)
-  // @Mutation(() => Post)
-  // updatePost(
-  //   @CurrentUser() CurrentUser: any,
-  //   @Args('updatePostInput') updatePostInput: UpdatePostInput,
-  // ) {
-  //   return this.postService.update(CurrentUser, updatePostInput);
-  // }
-
-  // @UseGuards(JwtAuthGuard)
-  // @Mutation(() => Post)
-  // removePost(@CurrentUser() CurrentUser: any, @Args('id') id: string) {
-  //   return this.postService.remove(CurrentUser, id);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Query(() => [PostResponse], { name: 'posts' })
+  async findAll() {
+    const post = await this.postService.findAll();
+    console.log('posts list =>', post);
+    return post;
+  }
 }
+
+// @UseGuards(JwtAuthGuard)
+// @Mutation(() => Post)
+// updatePost(
+//   @CurrentUser() CurrentUser: any,
+//   @Args('updatePostInput') updatePostInput: UpdatePostInput,
+// ) {
+//   return this.postService.update(CurrentUser, updatePostInput);
+// }
+
+// @UseGuards(JwtAuthGuard)
+// @Mutation(() => Post)
+// removePost(@CurrentUser() CurrentUser: any, @Args('id') id: string) {
+//   return this.postService.remove(CurrentUser, id);
+// }

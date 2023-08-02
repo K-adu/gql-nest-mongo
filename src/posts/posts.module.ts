@@ -13,5 +13,6 @@ import { AuthModule } from 'src/auth/auth.module';
     UsersModule,
   ],
   providers: [PostsService, PostsResolver, PostsRepository, AuthModule],
+  exports: [PostsService],
 })
 export class PostsModule {}

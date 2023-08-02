@@ -18,4 +18,12 @@ export class PostsService {
     console.log(data);
     return await this.postRepo.createPost(data);
   }
+
+  async findPostById(id) {
+    return this.postRepo.findPostById(id);
+  }
+
+  async findAll() {
+    return await this.postRepo.findAllPosts();
+  }
 }

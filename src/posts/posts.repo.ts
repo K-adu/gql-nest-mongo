@@ -15,21 +15,111 @@ export class PostsRepository {
   async createPost(data) {
     console.log(data);
     const createdPost = await this.postModel.create(data);
-    const post = this.postModel.aggregate([
-      {
-        $match: {
-          _id: createdPost._id,
+    const post = await this.postModel
+      .aggregate([
+        {
+          $match: {
+            _id: createdPost._id,
+          },
         },
-      },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'postedBy',
+            foreignField: '_id',
+            as: 'postedBy',
+          },
+        },
+        { $unwind: '$postedBy' },
+      ])
+      .exec();
+    console.log(post);
+    return post;
+  }
+
+  async findPostById(id) {
+    return await this.postModel.findById(id);
+  }
+
+  async findAllPosts() {
+    const post = await this.postModel.aggregate([
+      // {
+      //   $match: {
+      //     $isPublic: { $eq: true },
+      //   },
+      // },
       {
         $lookup: {
           from: 'users',
-          localField: 'postedBy',
-          foreignField: '_id',
+          let: { userId: '$postedBy' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ['$_id', '$$userId'],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
           as: 'postedBy',
         },
       },
       { $unwind: '$postedBy' },
+      {
+        $lookup: {
+          from: 'comments',
+          let: { post_Id: '$_id' },
+          pipeline: [{ $match: { $expr: { $eq: ['$$post_Id', '$postId'] } } }],
+          as: 'totalComments',
+        },
+      },
+      { $addFields: { totalComments: { $size: '$totalComments' } } },
+      {
+        //stage3 to get comment  details
+        $lookup: {
+          from: 'comments',
+          let: { post_Id: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: [
+                        '$postId',
+                        '$$post_Id' /*declared varaible form let */,
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              $limit: 5,
+            },
+            {
+              $lookup: {
+                from: 'users',
+                let: { user_Id: '$commentedBy' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $and: [{ $eq: ['$_id', '$$user_Id'] }] },
+                    },
+                  },
+                ],
+                as: 'commentedBy',
+              },
+            },
+            { $unwind: '$commentedBy' },
+          ],
+          as: 'comments',
+        },
+      },
     ]);
     return post;
   }

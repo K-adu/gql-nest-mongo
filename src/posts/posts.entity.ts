@@ -2,7 +2,7 @@ import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { User } from '../users/user.entity';
-//import {Comment} from '../comments/entities/comment.entity'
+import { Comment } from '../comments/comments.entity';
 export type PostDoccument = Post & Document;
 
 @Schema()
@@ -41,8 +41,8 @@ export class Post {
   @Field(() => Number, { nullable: true })
   totalComments: number;
 
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
-  // comments: Comment[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
+  comments: Comment[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
