@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { PostsService } from '../posts/posts.service';
 import { CommentsModule } from './comments.module';
 import { CreateCommentInput } from './dto/create-comment.input';
-import { UpdateCommentInput } from './dto/update-comment.input';
 import { Comment } from './comments.entity';
 
 @Injectable()
@@ -14,7 +13,7 @@ export class CommentsRepository {
   async create(data) {
     const createdComment = await this.commentsModule.create(data);
 
-    const comment = await this.commentsModule.aggregate([
+    const comment = this.commentsModule.aggregate([
       {
         $match: {
           _id: createdComment._id,
@@ -22,13 +21,48 @@ export class CommentsRepository {
       },
       {
         $lookup: {
+          from: 'users',
+          localField: 'commentedBy',
+          foreignField: '_id',
+          as: 'commentedBy',
+        },
+      },
+      { $unwind: '$commentedBy' },
+      {
+        $lookup: {
           from: 'posts',
           localField: 'postId',
           foreignField: '_id',
-          as: 'postId',
+          as: 'post',
         },
       },
-      { $unwind: '$postId' },
+      { $unwind: '$post' },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'post.postedBy',
+          foreignField: '_id',
+          as: 'post.postedBy',
+        },
+      },
+      { $unwind: '$post.postedBy' },
+      {
+        $project: {
+          _id: 1,
+          comment: 1,
+          commentedBy: 1,
+          postId: {
+            _id: '$post._id',
+            postTitle: '$post.postTitle',
+            postDescription: '$post.postDescription',
+            isPublic: '$post.isPublic',
+            postedBy: {
+              username: '$post.postedBy.username',
+              email: '$post.postedBy.email',
+            },
+          },
+        },
+      },
     ]);
     return comment;
   }

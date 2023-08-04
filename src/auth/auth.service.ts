@@ -35,9 +35,12 @@ export class AuthService {
       email: user.email,
       username: user.username,
     };
+    const email = data.email;
+    const username = user.username;
 
     return {
-      user,
+      email,
+      username,
       access_token: await this.jwtService.signAsync(payload),
     };
   }

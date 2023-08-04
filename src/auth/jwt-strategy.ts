@@ -18,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException('user not found with given credentials');
     }
-    console.log('user fetched after token validation', user);
+
     return user;
   }
 }

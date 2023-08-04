@@ -6,6 +6,7 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { CurrentUser } from 'src/auth/current-user';
 import { PostResponse } from './dto/response-post.output';
+import { UpdatePostInput } from './dto/update-post.input';
 @Resolver('Post')
 export class PostsResolver {
   constructor(private postService: PostsService) {}
@@ -22,35 +23,40 @@ export class PostsResolver {
     return post;
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Query(() => Post)
+  // @UseGuards(JwtAuthGuard)
+  @Query(() => [Post])
   async getPosts() {
-    return {
-      id: '3213215hfsdfh',
-      postTitle: 'this is the pos ttitle',
-      postDescription: 'this is the psot description',
-    };
+    const post = await this.postService.getPosts();
+    console.log(post);
+    return post;
   }
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Query(() => [PostResponse], { name: 'posts' })
   async findAll() {
     const post = await this.postService.findAll();
     console.log('posts list =>', post);
     return post;
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Post)
+  updatePost(
+    @CurrentUser() currentUser: any,
+    @Args('updatePost') data: UpdatePostInput,
+  ) {
+    return this.postService.updatePost(data, currentUser);
+  }
+  // @UseGuards(JwtAuthGuard)
+  // @Mutation(() => Post)
+  // updatePost(
+  //   @CurrentUser() CurrentUser: any,
+  //   @Args('updatePostInput') updatePostInput: UpdatePostInput,
+  // ) {
+  //   return this.postService.update(CurrentUser, updatePostInput);
+  // }
+
+  // @UseGuards(JwtAuthGuard)
+  // @Mutation(() => Post)
+  // removePost(@CurrentUser() CurrentUser: any, @Args('id') id: string) {
+  //   return this.postService.remove(CurrentUser, id);
 }
-
-// @UseGuards(JwtAuthGuard)
-// @Mutation(() => Post)
-// updatePost(
-//   @CurrentUser() CurrentUser: any,
-//   @Args('updatePostInput') updatePostInput: UpdatePostInput,
-// ) {
-//   return this.postService.update(CurrentUser, updatePostInput);
-// }
-
-// @UseGuards(JwtAuthGuard)
-// @Mutation(() => Post)
-// removePost(@CurrentUser() CurrentUser: any, @Args('id') id: string) {
-//   return this.postService.remove(CurrentUser, id);
-// }

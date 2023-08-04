@@ -9,9 +9,11 @@ export class AuthResolver {
 
   @Query(() => UserType)
   async validateUser(@Args('loginData') data: LoginInput) {
-    const { user, access_token } = await this.authService.validateUser(data);
+    const { email, username, access_token } =
+      await this.authService.validateUser(data);
     return {
-      user,
+      email,
+      username,
       access_token,
     };
   }

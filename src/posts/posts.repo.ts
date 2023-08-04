@@ -40,7 +40,20 @@ export class PostsRepository {
   async findPostById(id) {
     return await this.postModel.findById(id);
   }
-
+  async getPosts() {
+    const post = await this.postModel.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'postedBy',
+          foreignField: '_id',
+          as: 'postedBy',
+        },
+      },
+      { $unwind: '$postedBy' },
+    ]);
+    return post;
+  }
   async findAllPosts() {
     const post = await this.postModel.aggregate([
       // {
@@ -122,5 +135,16 @@ export class PostsRepository {
       },
     ]);
     return post;
+  }
+
+  async updateBlogRepository(postId, body) {
+    return await this.postModel.findByIdAndUpdate(postId, body);
+  }
+
+  async findLoggedInUserPost(data) {
+    return await this.postModel.findOne({
+      _id: data.postId,
+      postedBy: data.userId,
+    });
   }
 }

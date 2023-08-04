@@ -15,17 +15,16 @@ export class CommentsService {
   ) {}
 
   async createCommentService(CurrentUser, createCommentInput) {
+    console.log(CurrentUser);
     const post = await this.postService.findPostById(createCommentInput.id);
     if (!post) {
       throw new NotFoundException('Post not found');
     }
-    console.log('post=>', post);
     const newComment = {
       comment: createCommentInput.comment,
       postId: createCommentInput.id,
-      commentedBy: CurrentUser.id,
+      commentedBy: CurrentUser._id,
     };
-
-    return this.commentRepo.create(newComment);
+    return await this.commentRepo.create(newComment);
   }
 }

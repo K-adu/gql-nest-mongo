@@ -27,7 +27,6 @@ export class User {
     minLength: 5,
     type: String,
   })
-  @Field()
   password: string;
 }
 

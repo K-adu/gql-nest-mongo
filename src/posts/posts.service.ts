@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostsRepository } from './posts.repo';
 import { CreatePostInput } from './dto/create-post.input';
 
@@ -22,8 +22,21 @@ export class PostsService {
   async findPostById(id) {
     return this.postRepo.findPostById(id);
   }
-
+  async getPosts() {
+    return await this.postRepo.getPosts();
+  }
   async findAll() {
     return await this.postRepo.findAllPosts();
+  }
+  async updatePost(body: any, currentUser) {
+    const data = {
+      postId: body.id,
+      userId: currentUser._id,
+    };
+    const post = await this.postRepo.findLoggedInUserPost(data);
+    if (!post) {
+      return 'the blog doesnot exist or unauthorized to perform the action';
+    }
+    return await this.postRepo.updateBlogRepository(data.postId, body);
   }
 }
