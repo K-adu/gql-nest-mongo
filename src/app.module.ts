@@ -13,7 +13,9 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/finaltrydemo'),
+    MongooseModule.forRoot(
+      'mongodb+srv://yanjishhellscream:nothing@cluster0.whwef4o.mongodb.net/?retryWrites=true&w=majority',
+    ),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: false,
