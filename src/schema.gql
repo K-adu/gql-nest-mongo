@@ -19,11 +19,7 @@ type Post {
   isPublic: Boolean
   postedBy: User!
   totalComments: Float
-  image: Upload
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 type Comment {
   comment: String!
@@ -37,7 +33,6 @@ type PostResponse {
   isPublic: Boolean
   postedBy: User
   totalComments: Float
-  image: Upload
   _id: String!
   comments: [Comment!]
 }
@@ -56,8 +51,9 @@ input LoginInput {
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
-  createPost(createPost: CreatePostInput!, file: Upload!): Post!
+  createPost(createPost: CreatePostInput!): Post!
   updatePost(updatePost: UpdatePostInput!): Post!
+  removePost(id: String!): Post!
   createComment(createComment: CreateCommentInput!): [Comment!]!
 }
 

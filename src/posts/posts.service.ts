@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostsRepository } from './posts.repo';
 import { CreatePostInput } from './dto/create-post.input';
+import { CurrentUser } from 'src/auth/current-user';
 
 @Injectable()
 export class PostsService {
   constructor(private postRepo: PostsRepository) {}
 
-  async createPost(currentUser: any, createPostInput: CreatePostInput, file) {
+  async createPost(currentUser: any, createPostInput: CreatePostInput) {
     const { postTitle, postDescription, isPublic } = createPostInput;
     let id = currentUser._id;
     const data = {
@@ -14,7 +15,6 @@ export class PostsService {
       postDescription,
       isPublic,
       postedBy: id,
-      image: Buffer.from(file).toString('base64'),
     };
     console.log('this is the data from the post service', data);
     return await this.postRepo.createPost(data);
@@ -39,5 +39,10 @@ export class PostsService {
       return 'the blog doesnot exist or unauthorized to perform the action';
     }
     return await this.postRepo.updateBlogRepository(data.postId, body);
+  }
+
+  async remove(CurrentUser, id) {
+    const userId = CurrentUser._id;
+    await this.postRepo.remove(userId, id);
   }
 }

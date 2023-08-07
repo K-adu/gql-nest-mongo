@@ -6,6 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(graphqlUploadExpress());
+  // app.disable('x-powered-by');
   await app.listen(4000);
 }
 bootstrap();

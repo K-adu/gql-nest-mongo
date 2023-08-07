@@ -8,8 +8,6 @@ import { CurrentUser } from 'src/auth/current-user';
 import { PostResponse } from './dto/response-post.output';
 import { UpdatePostInput } from './dto/update-post.input';
 
-//@ts-ignore
-import { GraphQLUpload, FileUpload } from 'graphql-upload';
 @Resolver('Post')
 export class PostsResolver {
   constructor(private postService: PostsService) {}
@@ -20,28 +18,8 @@ export class PostsResolver {
   async createPost(
     @CurrentUser() currentUser,
     @Args('createPost') data: CreatePostInput,
-
-    @Args({ name: 'file', type: () => GraphQLUpload }) file: FileUpload,
   ) {
-    let readStream = file.createReadStream();
-    let dataImage = '';
-
-    //setting stream encoidng to binary so the chunks are kept in binary
-    readStream.setEncoding('binary');
-    readStream.once('error', (err) => {
-      return console.log(err);
-    });
-    readStream.on('data', (chunk) => (dataImage += chunk));
-    readStream.on('end', () => {
-      // If you need the binary data as a Buffer
-      // create one from data chunks
-      console.log(Buffer.from(dataImage, 'binary'));
-      this.postService.createPost(
-        currentUser,
-        data,
-        Buffer.from(dataImage, 'binary'),
-      );
-    });
+    this.postService.createPost(currentUser, data);
 
     // const [post] = await this.postService.createPost(currentUser, data);
     // return post;
@@ -79,8 +57,9 @@ export class PostsResolver {
   //   return this.postService.update(CurrentUser, updatePostInput);
   // }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Mutation(() => Post)
-  // removePost(@CurrentUser() CurrentUser: any, @Args('id') id: string) {
-  //   return this.postService.remove(CurrentUser, id);
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Post)
+  removePost(@CurrentUser() CurrentUser: any, @Args('id') id: string) {
+    return this.postService.remove(CurrentUser, id);
+  }
 }

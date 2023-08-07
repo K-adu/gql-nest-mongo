@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Post } from './posts.entity';
@@ -146,5 +150,16 @@ export class PostsRepository {
       _id: data.postId,
       postedBy: data.userId,
     });
+  }
+
+  async remove(userId, id) {
+    const post = await this.findPostById(id);
+    console.log(post);
+    if (!post.postedBy === userId) {
+      return new UnauthorizedException(
+        'you are not authorized to delete this post',
+      );
+    }
+    return await this.postModel.findByIdAndDelete(id);
   }
 }

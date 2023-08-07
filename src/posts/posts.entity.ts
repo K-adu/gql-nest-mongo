@@ -46,9 +46,9 @@ export class Post {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
   comments: Comment[];
 
-  @Prop({ type: Buffer })
-  @Field(() => GraphQLUpload, { nullable: true })
-  image: FileUpload;
+  // @Prop({ type: Buffer })
+  // @Field(() => GraphQLUpload, { nullable: true })
+  // image: FileUpload;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

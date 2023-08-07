@@ -3,7 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export type UserDoccument = User & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 @ObjectType()
 export class User {
   @Prop({
@@ -22,6 +22,7 @@ export class User {
   })
   @Field()
   email: string;
+
   @Prop({
     required: true,
     minLength: 5,

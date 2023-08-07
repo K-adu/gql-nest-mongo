@@ -15,9 +15,12 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://localhost:27017/finaltrydemo'),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRoot({
       driver: ApolloDriver,
       playground: false,
+      upload: false,
+      context: ({ req, res }) => ({ req, res }),
+
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
