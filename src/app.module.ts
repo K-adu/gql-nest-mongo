@@ -10,12 +10,11 @@ import { AuthModule } from './auth/auth.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+//mongodb+srv://yanjishhellscream:nothing@cluster0.whwef4o.mongodb.net/?retryWrites=true&w=majority
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://yanjishhellscream:nothing@cluster0.whwef4o.mongodb.net/?retryWrites=true&w=majority',
-    ),
+    MongooseModule.forRoot('mongodb://localhost:27017/finaltrydemo'),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: false,

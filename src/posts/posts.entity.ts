@@ -3,6 +3,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { User } from '../users/user.entity';
 import { Comment } from '../comments/comments.entity';
+//@ts-ignore
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
 export type PostDoccument = Post & Document;
 
 @Schema()
@@ -43,6 +45,10 @@ export class Post {
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
   comments: Comment[];
+
+  @Prop({ type: Buffer })
+  @Field(() => GraphQLUpload, { nullable: true })
+  image: FileUpload;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

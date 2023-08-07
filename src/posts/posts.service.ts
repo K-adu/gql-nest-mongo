@@ -6,7 +6,7 @@ import { CreatePostInput } from './dto/create-post.input';
 export class PostsService {
   constructor(private postRepo: PostsRepository) {}
 
-  async createPost(currentUser: any, createPostInput: CreatePostInput) {
+  async createPost(currentUser: any, createPostInput: CreatePostInput, file) {
     const { postTitle, postDescription, isPublic } = createPostInput;
     let id = currentUser._id;
     const data = {
@@ -14,8 +14,9 @@ export class PostsService {
       postDescription,
       isPublic,
       postedBy: id,
+      image: Buffer.from(file).toString('base64'),
     };
-    console.log(data);
+    console.log('this is the data from the post service', data);
     return await this.postRepo.createPost(data);
   }
 
