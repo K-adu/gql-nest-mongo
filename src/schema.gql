@@ -28,19 +28,23 @@ type Comment {
 }
 
 type PostResponse {
-  postTitle: String
-  postDescription: String
+  postTitle: String!
+  postDescription: String!
   isPublic: Boolean
-  postedBy: User
+  postedBy: User!
   totalComments: Float
   _id: String!
   comments: [Comment!]
 }
 
+type RemovePost {
+  postTitle: String!
+}
+
 type Query {
   tryQuery: User!
   validateUser(loginData: LoginInput!): UserType!
-  getPosts: [Post!]!
+  getPosts: [PostResponse!]!
   posts: [PostResponse!]!
 }
 
@@ -51,9 +55,9 @@ input LoginInput {
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
-  createPost(createPost: CreatePostInput!): Post!
+  createPost(createPost: CreatePostInput!): PostResponse!
   updatePost(updatePost: UpdatePostInput!): Post!
-  removePost(id: String!): Post!
+  removePost(id: String!): RemovePost!
   createComment(createComment: CreateCommentInput!): [Comment!]!
 }
 
@@ -73,7 +77,7 @@ input UpdatePostInput {
   postTitle: String
   postDescription: String
   isPublic: Boolean
-  id: String!
+  _id: String!
 }
 
 input CreateCommentInput {

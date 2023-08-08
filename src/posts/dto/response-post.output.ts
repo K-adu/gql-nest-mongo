@@ -4,7 +4,7 @@ import { Post } from '../posts.entity';
 import { Comment } from '../../comments/comments.entity';
 
 @ObjectType()
-export class PostResponse extends PartialType(Post) {
+export class PostResponse extends Post {
   @Field(() => String)
   _id: string;
 

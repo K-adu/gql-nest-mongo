@@ -1,13 +1,16 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Post } from './posts.entity';
 import { UsersService } from 'src/users/users.service';
 import { CreatePostInput } from './dto/create-post.input';
+import { stripIgnoredCharacters } from 'graphql';
+import { stringify } from 'querystring';
 
 @Injectable()
 export class PostsRepository {
@@ -153,10 +156,18 @@ export class PostsRepository {
   }
 
   async remove(userId, id) {
-    const post = await this.findPostById(id);
+    id = new mongoose.Types.ObjectId(id);
+    const post = await this.postModel.findById(id);
     console.log(post);
-    if (!post.postedBy === userId) {
-      return new UnauthorizedException(
+    if (!post) {
+      throw new NotFoundException('The post doesnot exist or is deleted ');
+    }
+    console.log('this is from the repositoyry;', post);
+    const uploadedBytostring = post.postedBy.toString();
+    const userIdtoString = userId.toString();
+    console.log(uploadedBytostring, userIdtoString);
+    if (uploadedBytostring !== userIdtoString) {
+      throw new UnauthorizedException(
         'you are not authorized to delete this post',
       );
     }

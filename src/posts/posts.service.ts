@@ -43,6 +43,6 @@ export class PostsService {
 
   async remove(CurrentUser, id) {
     const userId = CurrentUser._id;
-    await this.postRepo.remove(userId, id);
+    return await this.postRepo.remove(userId, id);
   }
 }

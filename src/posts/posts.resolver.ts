@@ -7,6 +7,8 @@ import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { CurrentUser } from 'src/auth/current-user';
 import { PostResponse } from './dto/response-post.output';
 import { UpdatePostInput } from './dto/update-post.input';
+import { RemovePost } from './dto/remove-post.dto';
+import { PossibleFragmentSpreadsRule } from 'graphql';
 
 @Resolver('Post')
 export class PostsResolver {
@@ -14,19 +16,19 @@ export class PostsResolver {
 
   //create post
   @UseGuards(JwtAuthGuard)
-  @Mutation(() => Post)
+  @Mutation(() => PostResponse)
   async createPost(
     @CurrentUser() currentUser,
     @Args('createPost') data: CreatePostInput,
   ) {
-    this.postService.createPost(currentUser, data);
+    //this.postService.createPost(currentUser, data);
 
-    // const [post] = await this.postService.createPost(currentUser, data);
-    // return post;
+    const [post] = await this.postService.createPost(currentUser, data);
+    return post;
   }
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => [Post])
+  @Query(() => [PostResponse])
   async getPosts() {
     const post = await this.postService.getPosts();
     console.log(post);
@@ -58,8 +60,8 @@ export class PostsResolver {
   // }
 
   @UseGuards(JwtAuthGuard)
-  @Mutation(() => Post)
-  removePost(@CurrentUser() CurrentUser: any, @Args('id') id: string) {
-    return this.postService.remove(CurrentUser, id);
+  @Mutation(() => RemovePost)
+  async removePost(@CurrentUser() CurrentUser: any, @Args('id') id: string) {
+    return await this.postService.remove(CurrentUser, id);
   }
 }
